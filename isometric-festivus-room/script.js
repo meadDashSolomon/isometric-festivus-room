@@ -168,7 +168,8 @@ const tick = () => {
 
   // Update raycaster
   raycaster.setFromCamera(mouse, camera);
-  const intersects = raycaster.intersectObjects(scene.children, true);
+  const hoverIntersects = raycaster.intersectObjects(poleModel, true);
+  canvas.style.cursor = hoverIntersects.length > 0 ? "pointer" : "auto";
 
   // Update controls
   controls.update();
