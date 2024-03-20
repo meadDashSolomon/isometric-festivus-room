@@ -45,12 +45,19 @@ const bakedPoleTexture = textureLoader.load("bakedPole.jpg");
 bakedPoleTexture.flipY = false;
 bakedPoleTexture.colorSpace = THREE.SRGBColorSpace;
 
+const bakedMalletTexture = textureLoader.load("bakedMallet.jpg");
+bakedMalletTexture.flipY = false;
+bakedMalletTexture.colorSpace = THREE.SRGBColorSpace;
+
 /**
  * Materials
  */
 const bakedMaterial = new THREE.MeshBasicMaterial({ map: bakedTexture });
 const bakedPoleMaterial = new THREE.MeshBasicMaterial({
   map: bakedPoleTexture,
+});
+const bakedMalletMaterial = new THREE.MeshBasicMaterial({
+  map: bakedMalletTexture,
 });
 
 /**
@@ -79,6 +86,20 @@ gltfLoader.load("pole.glb", (gltf) => {
   gltf.scene.position.x = 5;
   scene.add(gltf.scene);
   poleModel.push(gltf.scene);
+});
+
+// Mallet
+const malletModel = [];
+
+gltfLoader.load("mallet.glb", (gltf) => {
+  gltf.scene.traverse((child) => {
+    child.material = bakedMalletMaterial;
+  });
+  gltf.scene.position.z = 7;
+  gltf.scene.position.x = -7;
+  // gltf.scene.rotateY(Math.PI / 2);
+  scene.add(gltf.scene);
+  malletModel.push(gltf.scene);
 });
 
 /**
@@ -140,6 +161,7 @@ window.addEventListener("mousemove", (e) => {
   mouse.y = -(e.clientY / sizes.height) * 2 + 1;
 });
 
+// Pole event listener and animation
 window.addEventListener("click", () => {
   // Update raycaster to check for intersections
   raycaster.setFromCamera(mouse, camera);
@@ -158,6 +180,29 @@ window.addEventListener("click", () => {
   }
 });
 
+// Mallet event listener and animation
+window.addEventListener("click", () => {
+  raycaster.setFromCamera(mouse, camera);
+  const intersects = raycaster.intersectObjects(malletModel, true);
+
+  // Check for intersections with mallet model
+  if (intersects.length > 0) {
+    const intersectedMallet = intersects[0].object;
+
+    // GSAP timeline for the mallet swing animation
+    const tl = gsap.timeline();
+    tl.to(intersectedMallet.rotation, {
+      x: intersectedMallet.rotation.x + Math.PI / 2, // Swing down
+      duration: 0.3,
+      ease: "power1.inOut",
+    }).to(intersectedMallet.rotation, {
+      x: intersectedMallet.rotation.x, // Swing back to original position
+      duration: 0.3,
+      ease: "power1.inOut",
+    });
+  }
+});
+
 /**
  * Animate
  */
@@ -168,8 +213,14 @@ const tick = () => {
 
   // Update raycaster
   raycaster.setFromCamera(mouse, camera);
-  const hoverIntersects = raycaster.intersectObjects(poleModel, true);
-  canvas.style.cursor = hoverIntersects.length > 0 ? "pointer" : "auto";
+  const hoverPoleIntersects = raycaster.intersectObjects(poleModel, true);
+  const hoverMalletIntersects = raycaster.intersectObjects(malletModel, true);
+
+  // Change cursor when hovering over clickable events
+  canvas.style.cursor =
+    hoverPoleIntersects.length > 0 || hoverMalletIntersects.length > 0
+      ? "pointer"
+      : "auto";
 
   // Update controls
   controls.update();
