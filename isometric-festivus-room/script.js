@@ -59,6 +59,9 @@ const bakedPoleMaterial = new THREE.MeshBasicMaterial({
 const bakedMalletMaterial = new THREE.MeshBasicMaterial({
   map: bakedMalletTexture,
 });
+const bakedDingerMaterial = new THREE.MeshBasicMaterial({
+  color: "#808080",
+});
 
 /**
  * Model
@@ -102,6 +105,20 @@ gltfLoader.load("mallet.glb", (gltf) => {
   malletModel.push(gltf.scene);
 });
 
+// Dinger
+const dingerModel = [];
+
+gltfLoader.load("dinger.glb", (gltf) => {
+  gltf.scene.traverse((child) => {
+    child.material = bakedDingerMaterial;
+  });
+  gltf.scene.position.z = 8;
+  gltf.scene.position.x = -0.5;
+  gltf.scene.rotateY(Math.PI / 2);
+  scene.add(gltf.scene);
+  dingerModel.push(gltf.scene);
+});
+
 /**
  * Sizes
  */
@@ -133,9 +150,9 @@ const camera = new THREE.PerspectiveCamera(
   0.1,
   100
 );
-camera.position.x = 4;
-camera.position.y = 2;
-camera.position.z = 4;
+camera.position.x = 9;
+camera.position.y = 5;
+camera.position.z = 10;
 scene.add(camera);
 
 // Controls
@@ -195,11 +212,26 @@ window.addEventListener("click", () => {
       x: intersectedMallet.rotation.x + Math.PI / 2, // Swing down
       duration: 0.3,
       ease: "power1.inOut",
-    }).to(intersectedMallet.rotation, {
-      x: intersectedMallet.rotation.x, // Swing back to original position
-      duration: 0.3,
-      ease: "power1.inOut",
-    });
+    })
+      .to(intersectedMallet.rotation, {
+        x: intersectedMallet.rotation.x, // Swing back to original position
+        duration: 0.3,
+        ease: "power1.inOut",
+      })
+      .to(
+        dingerModel[0].position,
+        {
+          y: "+=2.4",
+          duration: 0.6,
+          ease: "power2.out",
+        },
+        "-=0.2"
+      )
+      .to(dingerModel[0].position, {
+        y: dingerModel[0].position.y,
+        duration: 0.6,
+        ease: "bounce.out",
+      });
   }
 });
 
