@@ -5,10 +5,31 @@
     <meta
       name="viewport"
       content="width=device-width, initial-scale=1.0" />
-    <title>Three.js Journey Festivus</title>
+    <title>Isometric Festivus Room</title>
+    <link
+      rel="icon"
+      type="image/x-icon"
+      href="/favicon.png" />
   </head>
   <body>
     <canvas class="webgl"></canvas>
+
+    <div class="loading-bar"></div>
+
+    <div
+      id="grievanceModal"
+      style="display: none">
+      <div id="modalContent">
+        <span
+          id="closeModal"
+          style="cursor: pointer"
+          >X</span
+        >
+        <textarea id="grievanceInput"></textarea>
+        <button id="submitGrievance">Air Your Grievance!</button>
+      </div>
+    </div>
+
     <script
       type="module"
       src="./script.js"></script>
