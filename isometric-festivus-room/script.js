@@ -549,7 +549,7 @@ document.getElementById("submitGrievance").addEventListener("click", () => {
       setTimeout(() => {
         // Set the initial scale of the text mesh to almost zero
         textMesh.scale.set(0.01, 0.01, 0.01);
-        textMesh.position.set(-3.5, 4.25, 4);
+        textMesh.position.set(-3.5, 3.25, 4);
         textMesh.rotateY(Math.PI * 1.2);
         scene.add(textMesh);
 
