@@ -4,7 +4,7 @@ A festivus themed room for Bruno Simon's Three.js Journey Isometric Room Challen
 
 Deployed Link: https://isometric-festivus-room.vercel.app/
 
-![Screenshot](/Screenshot.png)
+![Screenshot](./public/Screenshot.png)
 
 ## Table of Contents
 
