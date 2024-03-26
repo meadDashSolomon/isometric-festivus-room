@@ -1,5 +1,4 @@
 import * as THREE from "three";
-// import GUI from "lil-gui";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import { DRACOLoader } from "three/examples/jsm/loaders/DRACOLoader.js";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
@@ -12,11 +11,6 @@ import energyMeterFragmentShader from "./shaders/energyMeter/fragment.glsl";
 /**
  * Base
  */
-// Debug
-const debugObject = {};
-// const gui = new GUI({
-//   width: 400,
-// });
 
 // Canvas
 const canvas = document.querySelector("canvas.webgl");
@@ -99,6 +93,10 @@ const bakedMalletTexture = textureLoader.load("bakedMallet.jpg");
 bakedMalletTexture.flipY = false;
 bakedMalletTexture.colorSpace = THREE.SRGBColorSpace;
 
+const bakedDingerTexture = textureLoader.load("bakedDinger.jpg");
+bakedDingerTexture.flipY = false;
+bakedDingerTexture.colorSpace = THREE.SRGBColorSpace;
+
 const bakedGrievancesTexture = textureLoader.load("bakedGrievances.jpg");
 bakedGrievancesTexture.flipY = false;
 bakedGrievancesTexture.colorSpace = THREE.SRGBColorSpace;
@@ -122,7 +120,10 @@ const bakedMalletMaterial = new THREE.MeshBasicMaterial({
   map: bakedMalletTexture,
 });
 const bakedDingerMaterial = new THREE.MeshBasicMaterial({
-  color: "#808080",
+  map: bakedDingerTexture,
+});
+const textMaterial = new THREE.MeshBasicMaterial({
+  color: "#4170DA",
 });
 const bakedGrievancesMaterial = new THREE.MeshBasicMaterial({
   map: bakedGrievancesTexture,
@@ -133,6 +134,7 @@ const energyMeterMaterial = new THREE.ShaderMaterial({
     uFillAmount: { value: 0.0 },
     uTime: { value: 0.0 },
     uTurnRed: { value: 0.0 },
+    uTime: { value: 0.0 },
   },
   vertexShader: energyMeterVertexShader,
   fragmentShader: energyMeterFragmentShader,
@@ -152,6 +154,15 @@ gltfLoader.load("festivus.glb", (gltf) => {
     (child) => child.name === "energyMeter"
   );
   energyMeterMesh.material = energyMeterMaterial;
+
+  const textMesh = gltf.scene.children.find((child) => child.name === "Text");
+  textMesh.material = textMaterial;
+  const textMesh1 = gltf.scene.children.find((child) => child.name === "Text1");
+  textMesh1.material = textMaterial;
+  const textMesh2 = gltf.scene.children.find((child) => child.name === "Text2");
+  textMesh2.material = textMaterial;
+  const textMesh3 = gltf.scene.children.find((child) => child.name === "Text3");
+  textMesh3.material = textMaterial;
 
   gltf.scene.position.y -= 1;
   scene.add(gltf.scene);
@@ -318,6 +329,8 @@ const renderer = new THREE.WebGLRenderer({
 renderer.setSize(sizes.width, sizes.height);
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
+renderer.setClearColor("#19191f");
+
 /**
  * Raycaster
  */
@@ -350,7 +363,7 @@ window.addEventListener("click", () => {
 // Mallet event listener and animation
 // Prevent double clicks while animation is in motion
 let isAnimating = false;
-// Check for first or second click
+// Tracks if the click is the first or second click
 let isFilling = false;
 let fillAmount = 0.0;
 const maxFill = 1.03;
@@ -405,10 +418,10 @@ const animateMalletAndDinger = (mallet) => {
       }, 700);
     } else movementPercentage = 0.25; // For red state or any other cases
 
-    return 2.4 * movementPercentage; // Assuming 2.4 is the maximum vertical movement
+    return 2.4 * movementPercentage;
   };
 
-  // Helper function to resect energy meter
+  // Helper function to reset energy meter
   const resetEnergyMeter = () => {
     energyMeterMaterial.uniforms.uFillAmount.value = 0.0;
     energyMeterMaterial.uniforms.uTurnRed.value = 0.0;
@@ -418,7 +431,7 @@ const animateMalletAndDinger = (mallet) => {
   // GSAP timeline for the mallet swing animation
   const tl = gsap.timeline();
   tl.to(mallet.rotation, {
-    x: mallet.rotation.x + Math.PI / 2, // Swing down
+    x: mallet.rotation.x + Math.PI / 2, // Swing up
     duration: 0.3,
     ease: "power1.inOut",
     onComplete: () => {
@@ -564,6 +577,8 @@ const clock = new THREE.Clock();
 
 const tick = () => {
   const elapsedTime = clock.getElapsedTime();
+
+  energyMeterMaterial.uniforms.uTime.value = elapsedTime;
 
   // Increase fillAmount if we are in the filling state
   if (isFilling) {

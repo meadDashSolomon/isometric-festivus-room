@@ -1,5 +1,6 @@
 uniform float uFillAmount;
 uniform float uTurnRed;
+uniform float uTime;
 
 varying vec2 vUv;
 

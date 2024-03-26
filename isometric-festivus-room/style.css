@@ -45,16 +45,16 @@ body {
   margin: 20px 0;
   padding: 10px;
   border: 1px solid #ccc;
-  border-radius: 4px; /* Rounded corners */
-  resize: none; /* Prevents resizing to maintain layout */
-  height: 100px; /* Enough space to type out grievances */
-  font-family: "Arial", sans-serif; /* Sans-serif for readability */
+  border-radius: 4px;
+  resize: none;
+  height: 100px;
+  font-family: "Arial", sans-serif;
 }
 
 /* Styling for the submit button */
 #submitGrievance {
   cursor: pointer;
-  background-color: #2d69a3; /* Festivus pole blue */
+  background-color: #2d69a3;
   color: white;
   border: none;
   padding: 10px 20px;
@@ -65,7 +65,7 @@ body {
 }
 
 #submitGrievance:hover {
-  background-color: #1b4d72; /* Darker shade of blue for hover state */
+  background-color: #1b4d72;
 }
 
 .loading-bar {
